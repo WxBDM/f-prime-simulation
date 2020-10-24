@@ -9,7 +9,6 @@ Simulation of the deployment phase.
 """
 
 import probabilities as prob
-import stack
 from utils import Utils
 
 class DeploymentState:
@@ -166,8 +165,13 @@ class DeploymentState:
 
 
 # # test driver code, delete when scaling.
+
+# import sys, os
+# sys.path.append(os.path.dirname(os.getcwd())) # 'location_of_project/f-prime-simulation'
+# from dstructures.stack import StateStack
+
 # information = {'previous_state' : 'START!',
-#                'stack' : stack.StateStack(), # just instantiate a new object for now.
+#                'stack' : StateStack(), # just instantiate a new object for now.
 #                'current_state' : 'Deployment'}
 
 # charge = DeploymentState(information)

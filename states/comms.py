@@ -112,9 +112,13 @@ class CommsState:
 # This is the test driver code. Be sure to comment/delete before integrating it
 # into the driver code!
 
+# import sys, os
+# sys.path.append(os.path.dirname(os.getcwd())) # 'location_of_project/f-prime-simulation'
+# from dstructures.stack import StateStack
+
 # information = {'previous_state' : 'START!',
-# 'stack' : stack.StateStack(), # just instantiate a new object for now.
-# 'current_state' : 'Deployment'}
+# 'stack' : StateStack(), # just instantiate a new object for now.
+# 'current_state' : 'Comms'}
 
 # charge = CommsState(information)
 # charge.run_process()

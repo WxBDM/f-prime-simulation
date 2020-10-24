@@ -7,7 +7,6 @@ Created on Sat Oct 10 13:56:26 2020
 """
 
 import probabilities as prob
-import stack
 from utils import Utils
 
 class ChargeState:
@@ -26,6 +25,42 @@ class ChargeState:
                        'probabilities' : self.probabilities
                        }
 
+    def _pack(self):
+        '''Packs information to be sent to another function in a dictionary.
+        
+        Returns:
+            dictionary => information regarding the given state.
+        '''
+        d = { 'stack' : self.stack,
+            'probabilities' : self.probabilities,
+            'current_state' : self.this_state,
+            'is_info_d' : True,
+            }
+        
+        return d
+    
+    def _add_to_stack(self, states, indent = 0):
+        
+        # figure out the number of indents
+        indent_format = ""
+        for i in range(indent):
+            indent_format += "\t"
+        
+        # print information
+        print("{}Stack before: {}".format(indent_format, self.stack.to_string()))
+        self.stack.push(states)
+    
+    def phm_values(self):
+        
+        phm = {'rotation_x' : (None, 5), 
+               'rotation_y' : (None, 5),
+               'rotation_z' : (None, 5),
+               'soc' : (16, None),
+               'thermal' : (-10, None),
+              }
+        
+        return phm
+        
     
     def run_process(self):
         '''Runs the charge state process. return self.stacking out of this function
@@ -114,13 +149,18 @@ class ChargeState:
         print("==== END CHARGE ====\n")
         return self.stack
 
-# # test driver code, delete when scaling.
-# information = {'previous_state' : 'START!',
-#                'stack' : stack.StateStack(), # just instantiate a new object for now.
-#                'current_state' : 'Deployment'}
+# test driver code, delete when scaling.
+import sys, os
+sys.path.append(os.path.dirname(os.getcwd())) # 'location_of_project/f-prime-simulation'
 
-# charge = ChargeState(information)
-# charge.run_process()
+from dstructures.stack import StateStack
+
+information = {'previous_state' : 'START!',
+                'stack' : StateStack(), # just instantiate a new object for now.
+                'current_state' : 'Charge'}
+
+charge = ChargeState(information)
+charge.run_process()
 
 
 

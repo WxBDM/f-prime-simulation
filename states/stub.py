@@ -53,6 +53,14 @@ class {0}State:
         self.stack = info['stack']
         
         {3}
+    
+    def phm_values(self):
+        # DO NOT INCLUDE REACTION WHEEL SATURATION LIMITS! This is hardware
+        # based, so they will be checked in the PHM.
+        
+        phm = {}
+        
+        return phm
 
     def run_process(self):
         
