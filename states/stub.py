@@ -32,9 +32,12 @@ util_header_str = """self.util_header = {'previous_state' : self.previous_state,
                             'probabilities' : self.probabilities
                             }"""
 
+# have to use % here, .format doesn't work.
+phm_flag_val = "flags = {'state' : '%s'}" % stub_name
+    
 test_code_str = '''# information = {'previous_state' : 'START!',
 #       'stack' : stack.StateStack(), # just instantiate a new object for now.
-#       'current_state' : 'Deployment'}'''
+#       'current_state' : '%s'}''' % stub_name
     
 stub = '''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -43,6 +46,8 @@ import probabilities as prob
 from utils import Utils
 
 class {0}State:
+    
+    \'''Process code for {0} state.\'''
 
     utils = Utils()
 
@@ -54,15 +59,21 @@ class {0}State:
         
         {3}
     
-    def phm_values(self):
+    def phm_flags(self):
+        \'''Sets the PHM flags for the {0} state.\'''
         # DO NOT INCLUDE REACTION WHEEL SATURATION LIMITS! This is hardware
         # based, so they will be checked in the PHM.
         
-        phm = {}
+        # === EDIT THIS DICTIONARY WITH PHM FLAGS FOR THIS STATE ===
         
-        return phm
+        {6}
+        
+        # =============================================================
+        
+        return flags
 
     def run_process(self):
+        \'''Driver code to run a simulation for the {0} state.\'''
         
 		# print out end/start of new state.
         self.utils.header(self.util_header)
@@ -84,16 +95,16 @@ class {0}State:
 # import stack
 {4}
 
-# charge = {0}State(information)
-# charge.run_process()
+# {2} = {0}State(information)
+# {2}.run_process()
 
 
 '''.format(stub_name.capitalize(), stub_name, previous_state_str, util_header_str,
-     test_code_str, stub_name.upper())
+     test_code_str, stub_name.upper(), phm_flag_val)
 
 file = open("{}.py".format(stub_name), 'w')
 file.write(stub)
-print("Successfully written to {}.py".format(stub_name))
+print("State stub successfully created: {0}. File: {0}.py".format(stub_name))
 file.close()
 
 

@@ -118,6 +118,15 @@ class Hardware:
         @staticmethod
         def str_repr():
             return "OBC"
+    
+    class Radio(Methods):
+        
+        def __init__(self):
+            super().__init__()
+        
+        @staticmethod
+        def str_repr():
+            return "Radio"
         
     
     def __init__(self): # initialization

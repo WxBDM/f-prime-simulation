@@ -50,20 +50,20 @@ class ChargeState:
         print("{}Stack before: {}".format(indent_format, self.stack.to_string()))
         self.stack.push(states)
     
-    def phm_values(self):
+    def phm_flags(self):
         
-        phm = {'rotation_x' : (None, 5), 
-               'rotation_y' : (None, 5),
-               'rotation_z' : (None, 5),
-               'soc' : (16, None),
-               'thermal' : (-10, None),
+        d = {'state' : 'Charge',
+            'rotation_x' : (None, 5), 
+             'rotation_y' : (None, 5),
+             'rotation_z' : (None, 5),
+             'soc' : (16, None),
+             'thermal' : (-10, None),
               }
         
-        return phm
+        return d
         
-    
     def run_process(self):
-        '''Runs the charge state process. return self.stacking out of this function
+        '''Runs the charge state process. return self.stack out of this function
         means we're going to check the state queue.'''
         
         # print out end/start of new state.
