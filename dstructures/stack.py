@@ -13,27 +13,11 @@ Created on Sat Oct 10 13:07:26 2020
 #   to determine what is happening in the satellite. Assume no corruption
 #   has occured to the data due to radiation.
 
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Oct 10 13:07:26 2020
-
-@author: bdmolyne
-"""
-
-
-# Software States Simulation
-
-# This script will simulate the various software states by generating random numbers
-#   to determine what is happening in the satellite. Assume no corruption
-#   has occured to the data due to radiation.
-
 # How the stack is implemented:
     # FILO structure
     # List implementation. Last element in list is the one to pop/push.
 
-class StateStackRewrite:
+class StateStack:
     '''Represents the stack that is implemented in the software states'''
     
     state_map = {'Burn': 1, 'Charge' : 2, 'Comms' : 3, 'Contingency' : 4,
@@ -79,7 +63,7 @@ class StateStackRewrite:
                                         self.__class__.__name__, hex(id(self)))
     
     def __eq__(self, other): # determining if 2 stacks are equal
-        if not isinstance(other, StateStackRewrite):
+        if not isinstance(other, StateStack):
             raise ValueError("{} is not StateStackRewrite. Type found: {}".format(other, type(other)))
     
         for index, other_ele in enumerate(other):
@@ -128,6 +112,8 @@ class StateStackRewrite:
         
         return verbose_str
         
+    def to_string(self):
+        return self.__str__()
     
     def push(self, val, verbose = False, verbose_indent = 0):
         '''Add a value to the stack.

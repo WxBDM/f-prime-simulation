@@ -115,12 +115,12 @@ def charge():
     return {
         'tsp_functionality' : 100,
         
-        'gnc_peripherials_on' : 10,
+        'gnc_peripherials_on' : 100,
 
-        'rw_functionality' : 80,
-        'imu_functionality' : 90,
-        'st_functionality' : 90,
-        'ss_functionality' : 90,
+        'rw_functionality' : 100,
+        'imu_functionality' : 100,
+        'st_functionality' : 100,
+        'ss_functionality' : 100,
         
         'batteries_connected' : 100
 
@@ -130,5 +130,7 @@ def charge():
 def burn():
     '''All diamonds in burn'''
     
-    return {}
+    return {
+        'tsp_functionality' : 100
+        }
 

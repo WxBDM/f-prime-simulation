@@ -14,3 +14,4 @@ import sys, os
 sys.path.append(os.path.dirname(os.getcwd())) # 'location_of_project/f-prime-simulation'
 
 import probabilities
+import events

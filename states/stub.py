@@ -24,7 +24,7 @@ if stub_name + ".py" in list(os.listdir(os.getcwd())):
     print("ERROR: {}.py already in directory.".format(stub_name))
     exit()
 
-previous_state_str = "info['previous_state']"
+previous_state_str = "information['previous_state']"
 
 util_header_str = """self.util_header = {'previous_state' : self.previous_state,
                             'stack_to_string' : self.stack.to_string(),
@@ -51,11 +51,11 @@ class {0}State:
 
     utils = Utils()
 
-    def __init__(self, info):
-        self.this_state = info['current_state']
+    def __init__(self, information):
+        self.this_state = information['current_state']
         self.probabilities = prob.{1}()
         self.previous_state = {2}
-        self.stack = info['stack']
+        self.stack = information['stack']
         
         {3}
     

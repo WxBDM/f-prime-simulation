@@ -27,12 +27,9 @@ Note: In order to edit probability constraints of certain events happening,
 
 from dstructures.stack import StateStack
 from states.charge import ChargeState
-from states.deployment import DeploymentState
-from states.warmup import WarmupState
-from states.comms import CommsState
-
 
 import probabilities as prob
+from logger_out import logger
 
 
 class Driver:
@@ -42,11 +39,13 @@ class Driver:
         self.previous_state = d['previous_state']
         self.current_state = d['current_state']
         self.first_itr = True
+        self.logger = logger.Logger()
         
     def pack(self):
         return {'stack' : self.stack,
                 'previous_state' : self.previous_state,
-                'current_state' : self.current_state
+                'current_state' : self.current_state,
+                'logger' : self.logger
                 }
     
     def update(self, new_stack):
@@ -92,18 +91,14 @@ for nth_state in range(n_state_transition_cap):
         else:
             print("State stack is empty. Communicating with ground.")
             break
-        
-    if driver.current_state == 'Deployment': 
-        stack = DeploymentState(driver.pack()).run_process()
-    
-    elif driver.current_state == 'Warmup': 
-        stack = WarmupState(driver.pack()).run_process()
 
-    elif driver.current_state == 'Charge': 
+    if driver.current_state == 'Charge': 
         stack = ChargeState(driver.pack()).run_process()
     
-    elif driver.current_state == 'Comms': 
-        stack = CommsState(driver.pack()).run_process()
+    #elif driver.current_state == 'MYSTATE': 
+    #    stack = MYSTATE(driver.pack()).run_process()
+    #
+    # ...
     
         
     elif len(driver.stack) == 0:

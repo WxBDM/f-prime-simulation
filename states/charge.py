@@ -69,85 +69,45 @@ class ChargeState:
         # print out end/start of new state.
         self.utils.header(self.util_header)
         
-        # start logic
-        # TSP
-        print("\nEstablishing thermal set point")
-        print("\tRunning init program")
-        print('\tChecking TSP functionality')
+        # ==== YOUR CODE GOES HERE. ====
         
-        # TSP diamond
-        tsp_diamond = self.utils.pass_or_fail(self.probabilities['tsp_functionality'])
-        if not tsp_diamond: # if it failed
-            print("\ttsp functionality failed.")
-            print("\tStack before: {}".format(self.stack.to_string()))
-            self.stack.push('Charge', indent = 1)
-            self.stack.push('Safety 1', indent = 1)
-            print("\t" + self.stack.to_string())
-            
-            print("==== END CHARGE ====\n")
-            return self.stack # check state queue
+        self.events.charge_establish_tsp_init_program()
+        # Is TSP working properly?
+        passed = self.decisions.charge_tsp_functionally_verified()
+        if not passed: # it failed
+            # Go into safety and check the state stack.
+            self.events.add_state_to_state_stack('charge')
+            self.events.add_state_to_state_stack('safety1')
+            self.events.check_state_stack()
+            return # Whenever you have the above line, REMEMBER TO INCLUDE THIS!
         
-        # tsp functionality verified
-        print('\ttsp functionality verified')
+        # If it passed, continue this logic (set phm flags)
+        self.events.set_phm_flags()
+        self.events.read_optimal_charge_vector()
         
-        # set phm flags
-        print('Setting PHM flags')
+        # Are the peripherals on?
+        passed = self.decisions.charge_gnc_peripherals_on()
+        if not passed:
+            self.events.turn_peripherals_on()
+            # Check to make sure they're on.
+            passed = self.decisions.charge_peripherals_functionally_verified()
+            if not passed:
+                # Go into safety 1.
+                self.events.add_state_to_state_stack('charge')
+                self.events.add_state_to_state_stack('safety1')
+                self.events.check_state_stack()
+                return 
+        
+        # All is good, point towards the sun and charge.
+        self.events.alg_acquire_sun_position_init()
+        self.events.alg_sun_pointing_init()
+        self.events.charge()
+        self.events.alg_sun_pointing_terminate()
+        
+        self.events.check_state_stack()
+        return # this return statement is optional.
     
-        # read optimal charge vector
-        print('Reading optimal charge vector')
-    
-        # check to see if gnc periphs are on.
-        gnc_diamond = self.utils.pass_or_fail(self.probabilities['gnc_peripherials_on'])
-        gnc_check = self.utils.convert_yes_no(gnc_diamond)
-        print("GN&C Periphreal Check: Peripherals {}".format(gnc_check))
-        
-        # the diamond failed, turning on peripherals
-        if not gnc_diamond: #need to initalize them
-            rw_init = self.utils.pass_or_fail(self.probabilities['rw_functionality'])
-            print("\tInitializing RW")
-            imu_init = self.utils.pass_or_fail(self.probabilities['imu_functionality'])
-            print("\tInitializing IMU")
-            st_init = self.utils.pass_or_fail(self.probabilities['st_functionality'])
-            print("\tInitializing ST")
-            ss_init = self.utils.pass_or_fail(self.probabilities['ss_functionality'])
-            print("\tInitializing SS")
-            
-            # if any of these fail, charge and safety 1
-            if not all([rw_init, imu_init, st_init, ss_init]):
-                print("\tOne failed functionality.")
-                print("\t\tStack before: {}".format(self.stack.to_string()))
-                self.stack.push('Charge', indent = 2)
-                self.stack.push('Safety 1', indent = 2)
-                print("\t\t" + self.stack.to_string())
-                
-                print("==== END CHARGE ====\n")
-                return self.stack # check state queue
-            
-            print("\tPeriphreal functionality verified.")
-        
-        battery_diamond = self.utils.pass_or_fail(self.probabilities['batteries_connected'])
-        battery_check = self.utils.convert_yes_no(battery_diamond)
-        print('Battery connection check: {}'.format(battery_check))
-        
-        if not battery_diamond:
-            print("\tBattery isn't connected.")
-            print("\t\tStack before: {}".format(self.stack.to_string()))
-            self.stack.push('Charge', indent = 2)
-            self.stack.push('Safety 1', indent = 2)
-            print("\t\t" + self.stack.to_string())
-            
-            print("==== END CHARGE ====\n")
-            return self.stack # check state queue
-        
-        # Start pointing at the sun
-        print("Acquiring sun position")
-        print("Initializing sun pointing algorithm")
-        print("Now pointing at sun.")
-        print("Charging...")
-        print("Charge threshold met.")
-        
-        print("==== END CHARGE ====\n")
-        return self.stack
+        # ==============================
 
 # test driver code, delete when scaling.
 import sys, os
