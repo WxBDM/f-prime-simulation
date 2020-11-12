@@ -8,9 +8,9 @@ CONFIGURATION FILE FOR THE SIMULATION
 """
 
 # Any necessary imports
-from hardware import Hardware
-# from states import States
-from phm import PHM
+from hardware_mgr import Hardware
+from states_mgr import States
+from phm_mgr import PHM
 
 # This is the configuration file for the simulation. Register the hardware,
 #   states, and phm
@@ -24,7 +24,7 @@ start_state = 'deployment'
 
 hardware = Hardware()
 
-# Add in hardware to the simulation by doing hardware.add('name_of_hardware')
+# Add in hardware to the simulation by doing hardware.register('name_of_hardware')
 hardware.register('IMU')  
 hardware.register('Computer')  
 hardware.register('ReactionWheelX', {'sat_lim' : 0.075, 'is_on' : True})  
@@ -33,24 +33,27 @@ hardware.register('ReactionWheelX', {'sat_lim' : 0.075, 'is_on' : True})
 
 
 # # === STATE CONFIGURATION ===
-# state = States()
 
-# state.register('deployment')
+states = States()
+states.start_state = 'charge' # <-- Change this to the state you want to start in.
 
-# state.start_state = None # <-- Change this to the state you want to start in.
+from states.charge import ChargeState
+states.register('charge', ChargeState())
 
 # # ==== END STATE CONFIG ====
 
 
 
 # # === PHM CONFIGURATION ===
+
 phm = PHM()
 
 phm.register('thermal', (-10, 40))
 
 # # ==== END PHM CONFIG ====
 
-
+def pack():
+    return {'phm' : phm, 'hardware' : hardware, 'states' : states}
 
 
 # ===================================
@@ -61,6 +64,7 @@ phm.register('thermal', (-10, 40))
 # Instantiate logger
 # Pack all of the components into the logger.
 #   this should create 3 dataframes: phm
+
 
 
 

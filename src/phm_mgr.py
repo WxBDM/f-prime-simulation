@@ -8,13 +8,14 @@ Created on Fri Oct 23 21:07:35 2020
 
 import pandas as pd
 from types import MethodType
-from database import Database
+from datachecks import DataInputChecks
 
-class PHM(Database):
+class PHM(DataInputChecks):
     
     '''Prognostic Health Managemet system. Provides the interface between
     the user and the database/inner-workings.'''
     
+    db_phm_df = pd.DataFrame(columns = ['name', 'lower_bound', 'upper_bound'])
     _d = {} # dictionary to make this object indexable.
     
     def __str__(self): # string representation when print()
@@ -34,7 +35,7 @@ class PHM(Database):
             raise ValueError("{} not added. {}".format(index, error_msg))
         
         return self._d[index]
-           
+    
     def register(self, name, bounds, ma_dict = {}):
         '''Adds a new PHM threshold into the system.
         
@@ -50,44 +51,8 @@ class PHM(Database):
                 or attribute value.
         '''
         
-        # Data type checks!
-        error_msg = "Be sure to check the configuration file."
-        
-        # check to make sure it isn't registered already.
-        if name in self.db_phm_df['name'].to_list():
-            raise ValueError("{} is already registered. {}".format(name, error_msg))
-        
-        # Ensures the name is a string.
-        if not isinstance(name, str):
-            raise ValueError("name must be string. Found: {}. {}".format(type(name), error_msg))
-        
-        # Ensures ma_dict is a dictionary.
-        if not isinstance(ma_dict, dict):
-            raise ValueError("ma_dict must be a dictionary. Found: {}. {}".format(type(ma_dict), error_msg))
-        
-        # Ensures bounds is a tuple.
-        if not isinstance(bounds, tuple):
-            raise ValueError("bounds must be tuple. Found: {}. {}".format(type(bounds), error_msg))
-        
-        # Ensures bounds tuple is length of 2.
-        if len(bounds) != 2:
-            raise ValueError("Bounds must be length 2. Found: {}. {}".format(len(bounds), error_msg))
-        
-        # Ensures that there's a number (or none type) associated with each bound.
-        if not isinstance(bounds[0], (float, int, type(None))):
-            raise ValueError("First bound invalid; must be int/float. Found: {}. \
-                             {}".format(type(bounds[0]), error_msg))
-        if not isinstance(bounds[1], (float, int, type(None))):
-            raise ValueError("First bound invalid; must be int/float. Found: {}. \
-                             {}".format(type(bounds[1]), error_msg))
-        
-        # Compare the two bounds unless it's a none type.
-        if None not in bounds and bounds[0] > bounds[1]:
-            raise ValueError("Lower bound greater than upper bound. {}".format(error_msg))
-        
-        # check to see if all of the values are none.
-        if bounds[0] is None and bounds[1] is None:
-            raise ValueError("Both bounds can not be None. {}".format(error_msg))
+        # Refactored into class for code readability.
+        DataInputChecks.phm_register(self.db_phm_df, name, bounds, ma_dict)
     
         # set the initial dictionary, and then update it with ma_dict
         data_d = {'name' : name, 'lower_bound' : bounds[0], 'upper_bound' : bounds[1]}
@@ -134,7 +99,6 @@ class PHM(Database):
             # If it didn't exceed upper bound or lower bound, return False
             #   stating it is nominal.
             return False
-        
         def obj_magic_str(self): return self._series.to_string()
 
         
