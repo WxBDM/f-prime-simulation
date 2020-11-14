@@ -9,23 +9,36 @@ Created on Sat Nov  7 08:44:22 2020
 import pandas as pd
 
 class Database:
+
+    def __init__(self, phm_mgr_obj, hardware_mgr_obj, states_mgr_obj):
+        self.phm = phm_mgr_obj
+        self.hardware = hardware_mgr_obj
+        self.states = states_mgr_obj
+
+    def to_csv(self):
+        pass        
     
-    """Almost every component in this project inherits this, as this stores the global 
-    attributes for the simulation.
+    def components_to_series(self):
+        
+        '''Takes all databases and combines them into a series'''
+        
+        components = [self.phm, self.hardware, self.states]
+        
+        d = {}
+        for component in components:
+            names = component.db['name'].to_list()
+            cols = list(component.db.columns)
+            
+            row_index = 0
+            for row in names:
+                for column in cols:
+                    
+                    if column == 'name': continue
+                
+                    global_df_col_name = "_".join([component.mgr_type, row, column])
+                    val = component.db.iloc[row_index][column]
+                    d[global_df_col_name] = val
+                
+                row_index += 1
     
-    When reading through the source code, each component of the simulation (see architecture
-    diagram) has its own class. The class sets any global information that is needed
-    for the simulation, as well as provide behavior for the components."""
-    
-    db_phm_df = pd.DataFrame(columns = ['name', 'lower_bound', 'upper_bound'])
-    db_hardware_df = pd.DataFrame(columns = ['name', 'is_on'])
-    db_states_df = pd.DataFrame({})
-
-    db_events_df = pd.DataFrame({})
-    
-
-
-
-
-
-
+        return pd.Series(data = d)

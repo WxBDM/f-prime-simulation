@@ -13,10 +13,10 @@ class Actions(DataInputChecks):
 
     # === Built-in methods, these you do NOT need to edit. ===
     
-    def __init__(self, logger):
+    def __init__(self, logger, db):
         self.logger = logger
+        self.database = db
         
-    
     def add_state_to_state_stack(self, state_str):
         '''Adds a state to the state stack.
         
@@ -41,15 +41,7 @@ class Actions(DataInputChecks):
         event = self.logger.create_new_event() # creates new event node
         event.add_string('Checking state stack for new state.') # adds a string representation
         self.logger.add(event) # adds event to logger.
-        self.ogger.StateStack.check() # State stack functionality
-    
-    def set_phm_flags(self):
-        '''Sets the PHM flags for the state it is currently in'''
-        
-        event = self.logger.create_new_event()
-        event.add_string('Setting PHM flags')
-        self.logger.PHM.set_flags() # PHM functionality
-        self.logger.add(event)
+        self.logger.StateStack.check() # State stack functionality
         
     def decide(self, param):
         '''Randomly generate a number to decide if the process passes or not.'''
@@ -66,7 +58,7 @@ class Actions(DataInputChecks):
         
         event = self.logger.create_node()
         event.add_string('Running init program')
-        self.logger.add(event)
+        self.logger.add(event, self.database)
     
     def verify_tsp(self):
         
@@ -76,7 +68,8 @@ class Actions(DataInputChecks):
             desc.add_string('TSP Verification passed')
         else:
             desc.add_string('TSP Verification failed.')
-        self.logger.add(desc)
+        self.logger.add(desc, self.database)
+        return desc
 
     
     

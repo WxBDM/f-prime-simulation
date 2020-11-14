@@ -15,18 +15,19 @@ class PHM(DataInputChecks):
     '''Prognostic Health Managemet system. Provides the interface between
     the user and the database/inner-workings.'''
     
-    db_phm_df = pd.DataFrame(columns = ['name', 'lower_bound', 'upper_bound'])
+    db = pd.DataFrame(columns = ['name', 'lower_bound', 'upper_bound'])
     _d = {} # dictionary to make this object indexable.
+    mgr_type = 'phm'
     
     def __str__(self): # string representation when print()
-        return self.db_phm_df.to_string()
+        return self.db.to_string()
     
     def __repr__(self): # string representation of the object and where it's located.
         return '<{}.{} object located at {}>'.format(self.__class__.__module__, 
                                         self.__class__.__name__, hex(id(self)))
 
     def __len__(self):
-        return len(self.db_phm_df)
+        return len(self.db)
 
     def __getitem__(self, index):
         
@@ -36,8 +37,10 @@ class PHM(DataInputChecks):
         
         return self._d[index]
     
-    def register(self, name, bounds, ma_dict = {}):
-        '''Adds a new PHM threshold into the system.
+    def register(self, data, ma_dict = {}):
+        '''Adds a new PHM threshold into the system. PRIVATE, DO NOT USE!
+        
+        This is a design issue, it needs to get resolved at a later point.
         
         Parameters:
             Required:
@@ -51,20 +54,25 @@ class PHM(DataInputChecks):
                 or attribute value.
         '''
         
-        # Refactored into class for code readability.
-        DataInputChecks.phm_register(self.db_phm_df, name, bounds, ma_dict)
-    
-        # set the initial dictionary, and then update it with ma_dict
-        data_d = {'name' : name, 'lower_bound' : bounds[0], 'upper_bound' : bounds[1]}
-        data_d.update(ma_dict)
+        # iterate through the input dictionary. This register called from state.phm_values()
+        for key in data.keys():
+            name = key
+            lower_bound = data[key][0]
+            upper_bound = data[key][1]
+            
+            series_d = {'name' : name, 
+                        'lower_bound' : lower_bound, 
+                        'upper_bound' : upper_bound}
         
-        # load it into a series, then into info.
-        series = pd.Series(data = data_d)
+            series_d.update(ma_dict) # updates the dictionary to include any other columns.
         
-        # add it to the object dictionary. This is used only for interfacing
-        #   with the pandas dataframe.
-        self._d[name] = self._to_object(name, series)
-        self.db_phm_df = self.db_phm_df.append(series, ignore_index = True)
+            # load it into a series, then into info.
+            series = pd.Series(data = series_d)
+            
+            # add it to the object dictionary. This is used only for interfacing
+            #   with the pandas dataframe.
+            self._d[name] = self._to_object(name, series)
+            self.db = self.db.append(series, ignore_index = True)
     
     def _to_object(self, name, series):
         """Gets the object representation of the PHM value."""

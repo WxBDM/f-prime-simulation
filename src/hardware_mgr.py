@@ -16,8 +16,9 @@ class Hardware():
             
     # ground breaking: https://stackoverflow.com/questions/100003/what-are-metaclasses-in-python
     
-    db_hardware_df = pd.DataFrame(columns = ['name', 'is_on'])
+    db = pd.DataFrame(columns = ['name', 'is_on'])
     _d = {} # dictionary to make this object indexable.
+    mgr_type = 'hardware'
     
     def __getitem__(self, index):
         
@@ -28,14 +29,14 @@ class Hardware():
         return self._d[index]
 
     def __str__(self): # string representation when print()
-        return self.db_hardware_df.to_string()
+        return self.db.to_string()
     
     def __repr__(self): # string representation of the object and where it's located.
         return '<{}.{} object located at {}>'.format(self.__class__.__module__, 
                                         self.__class__.__name__, hex(id(self)))
     
     def __len__(self):
-        return len(self.db_hardware_df)
+        return len(self.db)
     
     def register(self, name, ma_dict = {}):
         '''Adds a new piece of hardware to the system. This dynamically generates
@@ -63,7 +64,7 @@ class Hardware():
             raise ValueError("ma_dict must be a dictionary. Found: {}")
             
         # check to make sure that the piece of hardware is not already in the dataframe
-        if name in self.db_hardware_df['name'].to_list():
+        if name in self.db['name'].to_list():
             raise ValueError("{} is already in dataframe.".format(name))
         
         # set the initial dictionary, and then update it with ma_dict
@@ -76,7 +77,7 @@ class Hardware():
         # add it to the object dictionary. This is used only for interfacing
         #   with the pandas dataframe.
         self._d[name] = self._to_object(name, series)
-        self.db_hardware_df = self.db_hardware_df.append(series, ignore_index = True)
+        self.db = self.db.append(series, ignore_index = True)
     
     def _to_object(self, name, series):
         """Gets the object representation of the hardware."""

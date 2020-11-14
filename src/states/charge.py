@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Oct 10 13:56:26 2020
-
-@author: bdmolyne
-"""
 
 from actions import Actions
 
@@ -13,14 +8,22 @@ class ChargeState():
     def set_logger(self, logger_obj):
         self.logger = logger_obj
     
+    def set_database(self, db_obj):
+        self._database = db_obj
+    
+    def get_logger(self):
+        return self.logger
+    
+    def get_database(self):
+        return self._database
+    
     def phm_values(self):
         
-        d = {'state' : 'Charge',
-            'rotation_x' : (None, 5), 
+        d = {'rotation_x' : (None, 5), 
              'rotation_y' : (None, 5),
              'rotation_z' : (None, 5),
              'soc' : (16, None),
-             'thermal' : (-10, None),
+             'thermal' : (-10, 40),
               }
         
         return d
@@ -36,34 +39,45 @@ class ChargeState():
     def run_process(self):
         '''Runs the charge state process.'''
         
-        actions = Actions(self.logger) # instantiates action class, sets logger.
-        actions.phm = self.phm_values()
+        self._database.phm.register(self.phm_values())
+        self.logger.set_state('charge')
+        actions = Actions(self.logger, self._database) # instantiates action class, sets logger and db
         actions.probabilities = self.decision_probability()
         
+        # ==== vvvv YOUR CODE GOES BELOW THIS vvv ====
+        
+        actions.database.components_to_series()
+        
         actions.charge_run_init_program()
-        actions.verify_tsp()
+        tsp_set_correctly = actions.verify_tsp()
+        if not tsp_set_correctly:
+            actions.add_to_state_queue('charge')
+            actions.add_to_state_queue('safety1')
+            actions.check_stack()
+            return
+            
+        # actions.set_phm_flags()
+        # actions.read_optimal_charge_vector()
+        # actions.turn_on_peripherals()
+        # peripherals_ok = actions.check_peripherals()
+        # if not peripherals_ok:
+        #     actions.add_to_state_queue('charge')
+        #     actions.add_to_state_queue('safety1')
+        #     actions.check_stack()
+        #     return
+        
+        # actions.acquire_sun_position()
+        # actions.initiate_sun_pointing()
+        # actions.charge()
+        # actions.terminate_sun_pointing()
+        # actions.check_stack()
     
-        # ==============================
+        # ============================================
         
         self.logger = actions.logger # gets the logger from the actions class.
-    
-    def get_logger(self):
-        return self.logger
+        self.db = actions.database
 
-# test driver code, delete when scaling.
-# import sys, os
-# sys.path.append(os.path.dirname(os.getcwd())) # 'location_of_project/f-prime-simulation'
-
-# from dstructures.stack import StateStack
-
-# information = {'previous_state' : 'START!',
-#                 'stack' : StateStack(), # just instantiate a new object for now.
-#                 'current_state' : 'Charge'}
-
-# charge = ChargeState(information)
-# charge.run_process()
-
-
+        return
 
 
 

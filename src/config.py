@@ -12,13 +12,7 @@ from hardware_mgr import Hardware
 from states_mgr import States
 from phm_mgr import PHM
 
-# This is the configuration file for the simulation. Register the hardware,
-#   states, and phm
-
-# === GENERAL CONFIGURATION ===
-start_state = 'deployment'
-
-# === END GENERAL CONFIG ===
+# This is the configuration file for the simulation. Register the hardware and states
 
 # === HARDWARE CONFIGURATION ===
 
@@ -43,37 +37,12 @@ states.register('charge', ChargeState())
 # # ==== END STATE CONFIG ====
 
 
-
-# # === PHM CONFIGURATION ===
-
-phm = PHM()
-
-phm.register('thermal', (-10, 40))
-
-# # ==== END PHM CONFIG ====
-
-def pack():
-    return {'phm' : phm, 'hardware' : hardware, 'states' : states}
-
-
 # ===================================
 # === Do not edit below this line ===
-# ===    Below is driver code.    ===
 # ===================================
 
-# Instantiate logger
-# Pack all of the components into the logger.
-#   this should create 3 dataframes: phm
-
-
-
-
-
-
-
-
-
-
+def pack():
+    return {'phm' : PHM(), 'hardware' : hardware, 'states' : states}
 
 
 

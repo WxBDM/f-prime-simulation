@@ -11,9 +11,11 @@ class DataInputChecks:
     '''Class to check the data types of a component's method of the system'''
     
     @staticmethod
-    def phm_register(db, name, bounds, ma_dict):
+    def phm_register(db, data_dict, ma_dict):
         
-        '''Checks to ensure that the data being passed into PHM is valid.'''
+        '''Checks to ensure that the data being passed into PHM is valid.
+        
+        **EDIT THIS, IT IS NOW A DICTIONARY!**'''
         
         # Data type checks!
         error_msg = "Be sure to check the configuration file."

@@ -16,7 +16,8 @@ class States():
     # ground breaking: https://stackoverflow.com/questions/100003/what-are-metaclasses-in-python
     
     _d = {} # dictionary to make this object indexable.
-    db_state_df = pd.DataFrame(columns = ['name'])
+    db = pd.DataFrame(columns = ['name'])
+    mgr_type = 'states'
     
     def __init__(self): # initialization
         pass
@@ -30,7 +31,7 @@ class States():
         return self._d[index]
 
     def __str__(self): # string representation when print()
-        return self.db_state_df.to_string()
+        return self.db.to_string()
     
     def __repr__(self): # string representation of the object and where it's located.
         return '<{}.{} object located at {}>'.format(self.__class__.__module__, 
@@ -60,7 +61,7 @@ class States():
             raise ValueError("ma_dict must be a dictionary. Found: {}")
             
         # check to make sure that the piece of hardware is not already in the dataframe
-        if name in self.db_state_df['name'].to_list():
+        if name in self.db['name'].to_list():
             raise ValueError("{} is already in dataframe.".format(name))
         
         # set the initial dictionary, and then update it with ma_dict
@@ -69,7 +70,7 @@ class States():
         
         # load it into a series, then into info.
         series = pd.Series(data = data_d)
-        self.db_state_df = self.db_state_df.append(series, ignore_index = True)
+        self.db = self.db.append(series, ignore_index = True)
         
         # add it to the object dictionary. This is used only for interfacing
         #   with the pandas dataframe.

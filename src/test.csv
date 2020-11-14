@@ -1,0 +1,3 @@
+id,state,string,hardware_Computer_is_on,hardware_Computer_sat_lim,hardware_IMU_is_on,hardware_IMU_sat_lim,hardware_ReactionWheelX_is_on,hardware_ReactionWheelX_sat_lim,phm_rotation_x_lower_bound,phm_rotation_x_upper_bound,phm_rotation_y_lower_bound,phm_rotation_y_upper_bound,phm_rotation_z_lower_bound,phm_rotation_z_upper_bound,phm_soc_lower_bound,phm_soc_upper_bound,phm_thermal_lower_bound,phm_thermal_upper_bound
+0.0,charge,Running init program,0.0,,0.0,,1.0,0.075,,5.0,,5.0,,5.0,16.0,,-10.0,40.0
+1.0,charge,TSP Verification failed.,0.0,,0.0,,1.0,0.075,,5.0,,5.0,,5.0,16.0,,-10.0,40.0
