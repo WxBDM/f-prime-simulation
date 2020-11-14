@@ -17,6 +17,10 @@ class ChargeState():
     def get_database(self):
         return self._database
     
+    def reset_db_and_logger(self, actions_obj):
+        self.logger = actions_obj.logger # gets the logger from the actions class.
+        self.db = actions_obj.database
+    
     def phm_values(self):
         
         d = {'rotation_x' : (None, 5), 
@@ -53,6 +57,7 @@ class ChargeState():
         if not tsp_set_correctly:
             actions.add_to_state_queue('charge')
             actions.add_to_state_queue('safety1')
+            self.reset_db_and_logger()
             actions.check_stack()
             return
             
@@ -73,9 +78,8 @@ class ChargeState():
         # actions.check_stack()
     
         # ============================================
-        
-        self.logger = actions.logger # gets the logger from the actions class.
-        self.db = actions.database
+
+        self.reset_db_and_logger()
 
         return
 

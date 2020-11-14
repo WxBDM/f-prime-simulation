@@ -27,6 +27,6 @@ while current_state_itr != None:
     logger = current_state.get_logger() # retrieves the logger from the state.
     db = current_state.get_database() # retrieves the database from the state.
     
-    current_state_itr = None
+    current_state_itr = None # guarentees termination of simulation
 
-logger.export()
+logger.export() # exports the logger.

@@ -49,6 +49,8 @@ class Logger:
     
     def add(self, logger_node, database_obj):
         
+        '''Adds a logger node into the logger.'''
+        
         if not isinstance(logger_node, self.LoggerNode):
             raise ValueError("Did not recieve logger node object. Recieved: {}".format(type(logger_node))) 
         
@@ -62,6 +64,9 @@ class Logger:
         self.logger_node_df_list.append(full_node)
     
     def create_node(self):
+        
+        '''Create a new editable logger node'''
+        
         node = self.LoggerNode(self._node_id)
         self._node_id += 1
         return node
